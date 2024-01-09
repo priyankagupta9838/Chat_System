@@ -1,5 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:chat_system/signup_page.dart';
+import 'package:chat_system/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,29 +7,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'chat_list.dart';
-import 'forgotpassword_page.dart';
+import 'chat_view2.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _LoginState extends State<Login> {
-  TextEditingController emailController=TextEditingController();
-  TextEditingController passController=TextEditingController();
-
+class _SignUpState extends State<SignUp> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        child: SizedBox(
-          height: size.height * 1,
-          width: size.width * 1,
+      body: SizedBox(
+        height: size.height * 1,
+        width: size.width * 1,
+        child: SingleChildScrollView(
           child: Column(
             children: [
               Padding(
@@ -54,7 +51,7 @@ class _LoginState extends State<Login> {
                           offset: Offset(1, 1))
                     ],
                   ),
-                  child:Column(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -62,14 +59,14 @@ class _LoginState extends State<Login> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircleAvatar(
-                            radius: size.height*0.02,
+                            radius: size.height * 0.02,
                             backgroundColor: Colors.white,
                           ),
                           SizedBox(
-                            width: size.width*0.04,
+                            width: size.width * 0.04,
                           ),
                           CircleAvatar(
-                            radius: size.height*0.02,
+                            radius: size.height * 0.02,
                             backgroundColor: Colors.white,
                           )
                         ],
@@ -77,31 +74,28 @@ class _LoginState extends State<Login> {
                       SizedBox(
                         height: size.height * 0.02,
                       ),
-                     AutoSizeText("talkto.me",
-
-                       style: GoogleFonts.aBeeZee(
-                           color: Colors.white,
-                           fontSize: size.height*0.03,
-                           fontWeight: FontWeight.w700),
-                     )
-
+                      AutoSizeText(
+                        "talkto.me",
+                        style: GoogleFonts.aBeeZee(
+                            color: Colors.white,
+                            fontSize: size.height * 0.03,
+                            fontWeight: FontWeight.w700),
+                      )
                     ],
                   ),
                 ),
               ),
               SizedBox(
-                height: size.height * 0.05,
+                height: size.height * 0.04,
               ),
               Container(
-                height: size.height * 0.62,
                 width: size.width * 1,
                 padding: EdgeInsets.only(
                     left: size.width * 0.05, right: size.width * 0.05),
                 child: Column(
                   children: [
-                    TextField(
-                      controller: emailController,
-                      decoration: const InputDecoration(
+                    const TextField(
+                      decoration: InputDecoration(
                         border: UnderlineInputBorder(
                             borderSide:
                                 BorderSide(color: CupertinoColors.activeGreen)),
@@ -116,6 +110,31 @@ class _LoginState extends State<Login> {
                                 BorderSide(color: CupertinoColors.activeGreen)),
                         prefixIcon: Icon(
                           CupertinoIcons.person,
+                          color: Colors.black,
+                        ),
+                        hintText: "Name",
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.height * 0.02,
+                    ),
+                     TextField(
+                       controller: emailController,
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(
+                            borderSide:
+                                BorderSide(color: CupertinoColors.activeGreen)),
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide:
+                                BorderSide(color: CupertinoColors.activeGreen)),
+                        disabledBorder: UnderlineInputBorder(
+                            borderSide:
+                                BorderSide(color: CupertinoColors.activeGreen)),
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide:
+                                BorderSide(color: CupertinoColors.activeGreen)),
+                        prefixIcon: Icon(
+                          CupertinoIcons.mail,
                           color: Colors.black,
                         ),
                         hintText: "E-mail",
@@ -149,117 +168,123 @@ class _LoginState extends State<Login> {
                     SizedBox(
                       height: size.height * 0.04,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              Navigator.pushReplacement(context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const ForgotPassword(),));
-
-                            },
-                            child: AutoSizeText("I forgot my password",
-                                style:
-                                    GoogleFonts.aBeeZee(color: Colors.black,
-                                    fontWeight: FontWeight.w700
-
-                                    )))
-                      ],
-                    ),
-                    SizedBox(
-                      height: size.height * 0.03,
-                    ),
-                    InkWell(
-                      onTap: () async {
-                        await FirebaseFirestore.instance
-                            .collection("User")
-                            .doc("Email")
-                            .get()
-                            .then((value) async {
-                          print("Email is : ${value.data().toString()}");
-                          List temp = value.data()!["Email"];
-                          if (temp.contains(emailController.text.trim())) {
-                            await signin(emailController.text.trim(), passController.text.trim())
-                                .then((value) {
-                              if (value == "1") {
-                                print("Succesfull");
-                                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ChatList(),));
-
-
-                              }
-                              else {
-                                InAppNotifications.instance
-                                  ..titleFontSize = 14.0
-                                  ..descriptionFontSize = 14.0
-                                  ..textColor = Colors.black
-                                  ..backgroundColor =
-                                  const Color.fromRGBO(150, 150, 150, 1)
-                                  ..shadow = true
-                                  ..animationStyle =
-                                      InAppNotificationsAnimationStyle.scale;
-                                InAppNotifications.show(
-                                    title: 'Failed',
-                                    duration: const Duration(seconds: 2),
-                                    description: value,
-                                    leading: const Icon(
-                                      Icons.error_outline_outlined,
-                                      color: Colors.red,
-                                      size: 55,
-                                    ));
-                              }
-                            });
-                          } else {
-                            InAppNotifications.instance
+                    Container(
+                        height: size.height * 0.065,
+                        width: size.width * 1,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(
+                                size.height * 0.05,
+                              ),
+                              bottomRight: Radius.circular(
+                                size.height * 0.05,
+                              ),
+                              bottomLeft: Radius.circular(
+                                size.height * 0.05,
+                              )),
+                          color: CupertinoColors.activeGreen,
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(backgroundColor: CupertinoColors.activeGreen,),
+                          onPressed: () async {
+                            if (emailController.text.trim().isNotEmpty) {
+                              String temp = await signIn(
+                                  emailController.text.trim(),
+                                  passController.text.trim());
+                              await FirebaseAuth.instance.currentUser!
+                                  .sendEmailVerification();
+                              final record = await FirebaseFirestore.instance
+                                  .collection("User")
+                                  .doc("Email")
+                                  .get();
+                              record.exists
+                                  ? await FirebaseFirestore.instance
+                                      .collection("User")
+                                      .doc("Email")
+                                      .update({
+                                      "Email": FieldValue.arrayUnion([
+                                        FirebaseAuth.instance.currentUser?.email
+                                      ])
+                                    })
+                                  : await FirebaseFirestore.instance
+                                      .collection("User")
+                                      .doc("Email")
+                                      .set({
+                                      "Email": FieldValue.arrayUnion([
+                                        FirebaseAuth.instance.currentUser?.email
+                                      ])
+                                    });
+                              if(temp=='1'){
+                              InAppNotifications.instance
                               ..titleFontSize = 14.0
                               ..descriptionFontSize = 14.0
                               ..textColor = Colors.black
-                              ..backgroundColor =
-                              const Color.fromRGBO(150, 150, 150, 1)
+                              ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
                               ..shadow = true
-                              ..animationStyle =
-                                  InAppNotificationsAnimationStyle.scale;
-                            InAppNotifications.show(
-                                title: 'Failed',
-                                duration: const Duration(seconds: 2),
-                                description: "No such account found",
-                                // leading: const Image(
-                                //     image: AssetImage('assets/icon/icon.png'))
+                              ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                              InAppNotifications.show(
+                              title: 'Successfully',
+                              duration: const Duration(seconds: 2),
+                              description: 'Your account is created successfully. Please verify your email',
+                              leading: const Icon(
+                              Icons.error_outline_outlined,
+                              color: Colors.red,
+                              size: 55,
+                              )
+                              );
+                              }
 
-                             );
-                          }
-                        });
-                      },
-                      child: Container(
-                          height: size.height * 0.065,
-                          width: size.width * 1,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(
-                                  size.height * 0.05,
-                                ),
-                                bottomRight: Radius.circular(
-                                  size.height * 0.05,
-                                ),
-                                bottomLeft: Radius.circular(
-                                  size.height * 0.05,
-                                )),
-                            color: CupertinoColors.activeGreen,
+
+                              else{
+                              InAppNotifications.instance
+                              ..titleFontSize = 14.0
+                              ..descriptionFontSize = 14.0
+                              ..textColor = Colors.black
+                              ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                              ..shadow = true
+                              ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                              InAppNotifications.show(
+                              title: 'Failed',
+                              duration: const Duration(seconds: 2),
+                              description: temp,
+                              leading: const Icon(
+                              Icons.error_outline_outlined,
+                              color: Colors.red,
+                              size: 55,
+                              )
+                              );
+                              }
+                            }
+                            else{
+                            InAppNotifications.instance
+                            ..titleFontSize = 14.0
+                            ..descriptionFontSize = 14.0
+                            ..textColor = Colors.black
+                            ..backgroundColor =
+                            const Color.fromRGBO(150, 150, 150, 1)
+                            ..shadow = true
+                            ..animationStyle =
+                            InAppNotificationsAnimationStyle.scale;
+                            InAppNotifications.show(
+                            title: 'Failed',
+                            duration: const Duration(seconds: 2),
+                            description: "Email id can not be empty",
+                            leading: const Icon(
+                            Icons.error_outline_outlined,
+                            color: Colors.red,
+                            size: 55,
+                            ));
+                            }
+                          },
+                          child: AutoSizeText(
+                            "Sign Up",
+                            style: GoogleFonts.aBeeZee(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              AutoSizeText(
-                                "Sign In",
-                                style: GoogleFonts.aBeeZee(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                            ],
-                          )),
-                    ),
+                        )),
                     SizedBox(
-                      height: size.height * 0.03,
+                      height: size.height * 0.01,
                     ),
                     Center(
                       child: TextButton(
@@ -267,7 +292,7 @@ class _LoginState extends State<Login> {
                           child: const AutoSizeText("or Sign in with")),
                     ),
                     SizedBox(
-                      height: size.height * 0.02,
+                      height: size.height * 0.01,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -309,7 +334,7 @@ class _LoginState extends State<Login> {
                         InkWell(
                           onTap: () {},
                           child: Container(
-                              height: size.height * 0.065,
+                              height: size.height * 0.064,
                               width: size.width * 0.4,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.only(
@@ -343,29 +368,32 @@ class _LoginState extends State<Login> {
                       ],
                     ),
                     SizedBox(
-                      height: size.height * 0.04,
+                      height: size.height * 0.02,
                     ),
                     Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AutoSizeText("Don't have account? ",
-                      style: GoogleFonts.aBeeZee(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700),
-
-                    ),
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SignUp(),));
-                        },
-                        child: AutoSizeText(
-                          "Sign up ",
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AutoSizeText(
+                          "Already have account? ",
                           style: GoogleFonts.aBeeZee(
-                              color: CupertinoColors.activeGreen,
-                              fontWeight: FontWeight.w700),
-                        ))
-                  ],
-                )
+                              color: Colors.black, fontWeight: FontWeight.w700),
+                        ),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Login(),
+                                  ));
+                            },
+                            child: AutoSizeText(
+                              "Sign In ",
+                              style: GoogleFonts.aBeeZee(
+                                  color: CupertinoColors.activeGreen,
+                                  fontWeight: FontWeight.w700),
+                            ))
+                      ],
+                    )
                   ],
                 ),
               )
@@ -375,10 +403,12 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-  Future<String> signin(String email, String password) async {
+
+  Future<String> signIn(String email, String password) async {
     try {
       await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+          .createUserWithEmailAndPassword(email: email, password: password);
+      print("User Created");
       return "1";
     } on FirebaseAuthException catch (e) {
       print(e.code);

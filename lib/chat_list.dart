@@ -1,9 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import 'chat_page.dart';
-import 'chat_view.dart';
+import 'chat_view2.dart';
 
 class ChatList extends StatefulWidget {
   const ChatList({super.key});
@@ -15,63 +15,109 @@ class ChatList extends StatefulWidget {
 class _ChatListState extends State<ChatList> {
   @override
   Widget build(BuildContext context) {
-    Size size=MediaQuery.of(context).size;
-
-    return  Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
-        title: const AutoSizeText("Talk",style: TextStyle(color: Colors.black,fontSize: 30,fontWeight: FontWeight.w600)),
-      ),
+    Size size = MediaQuery.of(context).size;
+    return Scaffold(
+      backgroundColor: Colors.white,
       body: SizedBox(
         height: size.height*1,
-        child: ListView.builder(
-          itemCount:1 ,
-          itemBuilder: (context, index) {
-            return SizedBox(
-              height: size.height*0.11,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: InkWell(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const Chat_View (),));
-                      },
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundColor: Colors.purple.shade600,
-                            child: const AutoSizeText(
-                                "P",
-                                style: TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.w600)
-                            ),
-                          ),
-                          SizedBox(
-                            width: size.width*0.1,
-                          ),
-                          Container(
-                            width: size.width*0.65,
-                            child: const AutoSizeText("Priyanka Gupta",
-
-                                style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.w600)
-                            ),
-                          )
-                        ],
-                      ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: size.height * 0.15,
+              width: size.width * 1,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(
+                      size.height * 0.07,
                     ),
                   ),
-                  const Divider(height: 1,thickness: 1,color: Colors.black,)
+                  color: CupertinoColors.activeGreen),
+              child: Column(
+
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: size.height * 0.03),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [Icon(CupertinoIcons.search)],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(right: size.width * 0.3),
+                    child: AutoSizeText(
+                      "Chat",
+                      style: GoogleFonts.aBeeZee(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: size.height * 0.035),
+                    ),
+                  )
                 ],
               ),
-            );
-          },),
+            ),
+
+            SizedBox(
+              height: size.height*0.84,
+              child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: 1,
+                itemBuilder: (context, index) {
+                  return Container(
+                    height: size.height * 0.1,
+                    width: size.width * 1,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white, width: 1),
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(
+                            size.height * 0.1,
+                          ),
+                        ),
+                        color: Colors.purple),
+                    child: Column(
+
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: size.width * 0.1),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: size.height * 0.03,
+                                child: const Text("P"),
+                              ),
+                              SizedBox(
+                                width: size.width * 0.03,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AutoSizeText(
+                                    "Priyanka gupta",
+                                    style: GoogleFonts.aBeeZee(
+                                        color: Colors.white),
+                                  ),
+                                  AutoSizeText(
+                                    "Hi Everyone",
+                                    style: GoogleFonts.aBeeZee(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
-
-
-    ) ;
+    );
   }
 }

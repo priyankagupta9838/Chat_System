@@ -1,9 +1,11 @@
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:chat_system/signup_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
+import 'chat_list.dart';
 import 'chat_view2.dart';
 import 'firebase_options.dart';
-import 'login_page.dart';
+import 'newfile.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +29,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const MyHomePage(),
+      builder: InAppNotifications.init(),
     );
   }
 }
@@ -47,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
 
-    return  const Login() ;
+    return  const  ContentPage() ;
   }
 
 }

@@ -106,6 +106,7 @@ class _chatState extends State<chat> {
                 chatViewState: ChatViewState.hasMessages,
 
                 appBar: const ChatViewAppBar(
+
                   elevation: 0,
                   backGroundColor: Colors.brown,
                   profilePicture: "",
