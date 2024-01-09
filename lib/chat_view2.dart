@@ -1,3 +1,4 @@
+
 import 'package:chatview/chatview.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,223 +12,324 @@ class chat extends StatefulWidget {
 }
 
 class _chatState extends State<chat> {
+  bool chatRefresh=true;
   bool isDarkTheme = false;
   final currentUser = ChatUser(
-    id: '1',
-    name: 'Flutter',
-    profilePhoto: "assets/images/profile.jpg",
+    id: 'gupta200priyanka@gmail.com',
+    name: 'Priyanka Gupta',
+    //profilePhoto: "assets/images/profile.jpg",
   );
   final _chatController = ChatController(
     initialMessageList: [],
     scrollController: ScrollController(),
-    chatUsers: [
-      ChatUser(
-        id: '2',
-        name: 'Simform',
-        profilePhoto: "assets/images/profile.jpg",
-      ),
-      ChatUser(
-        id: '3',
-        name: 'Jhon',
-        profilePhoto: "assets/images/profile.jpg",
-      ),
-      ChatUser(
-        id: '4',
-        name: 'Mike',
-        profilePhoto: "assets/images/profile.jpg",
-      ),
-      ChatUser(
-        id: '5',
-        name: 'Rich',
-        profilePhoto: "assets/images/profile.jpg",
-      ),
-    ],
+    chatUsers: [],
   );
+
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection("ChatSystem").doc("AruPriya").snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          return SizedBox(
-            height: size.height * 1,
-            width: size.width * 1,
-            child: ChatView(
-              currentUser: currentUser,
-              chatController: _chatController,
-              onSendTap: _onSendTap,
-              featureActiveConfig: const FeatureActiveConfig(
-                lastSeenAgoBuilderVisibility: true,
-                receiptsBuilderVisibility: true,
-              ),
-              chatViewState: ChatViewState.hasMessages,
-              chatViewStateConfig: ChatViewStateConfiguration(
-                loadingWidgetConfig: const ChatViewStateWidgetConfiguration(
-                  loadingIndicatorColor: Colors.blue,
-                ),
-                onReloadButtonTap: () {},
-              ),
-              typeIndicatorConfig: const TypeIndicatorConfiguration(
-                  flashingCircleBrightColor: Colors.blue,
-                  flashingCircleDarkColor: Colors.purpleAccent),
-              appBar: const ChatViewAppBar(
-                elevation: 0,
-                backGroundColor: Colors.brown,
-                profilePicture:"",
-                backArrowColor: Colors.white70,
-                chatTitle: "Chat view",
-                chatTitleTextStyle: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  letterSpacing: 0.25,
-                ),
-                userStatus: "online",
-                userStatusTextStyle: TextStyle(color: Colors.grey),
-              ),
-              chatBackgroundConfig: const ChatBackgroundConfiguration(
-                messageTimeIconColor: Colors.green,
-                messageTimeTextStyle: TextStyle(color: Colors.pinkAccent),
-                defaultGroupSeparatorConfig: DefaultGroupSeparatorConfiguration(
-                  textStyle: TextStyle(
-                    color: Colors.teal,
-                    fontSize: 17,
-                  ),
-                ),
-                backgroundColor: Colors.white70,
-              ),
-              sendMessageConfig: SendMessageConfiguration(
-                imagePickerIconsConfig: const ImagePickerIconsConfiguration(
-                  cameraIconColor: Colors.black,
-                  galleryIconColor: Colors.black,
-                ),
-                replyMessageColor: Colors.black26,
-                defaultSendButtonColor: Colors.black26,
-                replyDialogColor: Colors.black26,
-                replyTitleColor: Colors.black26,
-                textFieldBackgroundColor: Colors.cyan,
-                closeIconColor: Colors.black,
-                textFieldConfig: TextFieldConfiguration(
-                  onMessageTyping: (status) {
-                    /// Do with status
-                    debugPrint(status.toString());
-                  },
+      body: SizedBox(
+        height: size.height*1,
+        width: size.width*1,
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection("ChatSystem")
+              .doc("AruPriya")
+              .snapshots(),
+          builder: (BuildContext context, snapshot) {
+            print(" dataa is.............${snapshot.data?.data()}");
+            if(  snapshot.data?.data() !=null && snapshot.hasData ){
 
-                  compositionThresholdTime: const Duration(seconds: 1),
-                  textStyle: const TextStyle(color: Colors.black),
+                _chatController.initialMessageList.clear();
+
+              _chatController.chatUsers.add(
+                ChatUser(
+                  id: 'arunjijhmaniya2003@gmail.com',
+                  name: 'Arun kumar',
+                  //profilePhoto: "assets/images/profile.jpg",
                 ),
-                micIconColor: Colors.blue,
-                voiceRecordingConfiguration: const VoiceRecordingConfiguration(
-                  backgroundColor: Colors.yellow,
-                  recorderIconColor: Colors.cyanAccent,
-                  waveStyle: WaveStyle(
-                    showMiddleLine: false,
-                    waveColor: Colors.white,
-                    extendWaveform: true,
-                  ),
-                ),
-              ),
-              chatBubbleConfig: ChatBubbleConfiguration(
-                outgoingChatBubbleConfig: const ChatBubble(
-                  linkPreviewConfig: LinkPreviewConfiguration(
-                    backgroundColor: Colors.white,
-                    bodyStyle: TextStyle(fontSize: 10),
-                    titleStyle: TextStyle(fontSize: 5),
-                  ),
-                  receiptsWidgetConfig:
-                  ReceiptsWidgetConfig(showReceiptsIn: ShowReceiptsIn.all),
-                  color: CupertinoColors.activeOrange,
-                ),
-                inComingChatBubbleConfig: ChatBubble(
-                  linkPreviewConfig: const LinkPreviewConfiguration(
-                    linkStyle: TextStyle(
-                      color: Colors.blue,
-                      decoration: TextDecoration.underline,
-                    ),
-                    backgroundColor: Colors.white,
-                    bodyStyle: TextStyle(fontSize: 10),
-                    titleStyle: TextStyle(fontSize: 5),
-                  ),
-                  textStyle: const TextStyle(color: Colors.pinkAccent),
-                  onMessageRead: (message) {
-                    /// send your message reciepts to the other client
-                    debugPrint('Message Read');
-                  },
-                  senderNameTextStyle: const TextStyle(color: Colors.black),
-                  color: Colors.pinkAccent,
-                ),
-              ),
-              replyPopupConfig: const ReplyPopupConfiguration(
-                backgroundColor: Colors.white,
-                buttonTextStyle: TextStyle(color: Colors.black),
-                topBorderColor: Colors.black,
-              ),
-              reactionPopupConfig: ReactionPopupConfiguration(
-                shadow: BoxShadow(
-                  color: isDarkTheme ? Colors.black54 : Colors.grey.shade400,
-                  blurRadius: 20,
-                ),
-                backgroundColor: Colors.white,
-              ),
-              messageConfig: MessageConfiguration(
-                messageReactionConfig: MessageReactionConfiguration(
-                  backgroundColor: Colors.white,
-                  borderColor: Colors.black,
-                  reactedUserCountTextStyle: const TextStyle(color: Colors.black),
-                  reactionCountTextStyle: const TextStyle(color: Colors.black),
-                  reactionsBottomSheetConfig: ReactionsBottomSheetConfiguration(
-                    backgroundColor: Colors.white,
-                    reactedUserTextStyle: const TextStyle(
-                      color: Colors.cyan,
-                    ),
-                    reactionWidgetDecoration: BoxDecoration(
-                      color: Colors.cyan,
-                      boxShadow: [
-                        BoxShadow(
-                          color: isDarkTheme ? Colors.black12 : Colors.grey.shade200,
-                          offset: const Offset(0, 20),
-                          blurRadius: 40,
+              );
+
+              for( int index=0; index < snapshot.data!.data()?["Chat"].length;index++){
+                _chatController.initialMessageList.add(
+                    snapshot.data!.data()?["Chat"][index]["ReplyMassage"]==""
+                    ?
+                  Message(
+                    id: snapshot.data!.data()!["Chat"][index]["Time"].toString(),
+                    createdAt:snapshot.data!.data()?["Chat"][index]["Time"].toDate(),
+                    message: snapshot.data!.data()!["Chat"][index]["Massage"].toString(),
+                    sendBy: snapshot.data!.data()!["Chat"][index]["Email"],
+                    // replyMessage:ReplyMessage. ,
+                    messageType: MessageType.text,
+
+                  )
+                        :
+                    Message(
+                      id: snapshot.data!.data()!["Chat"][index]["Time"].toString(),
+                      createdAt:snapshot.data!.data()?["Chat"][index]["Time"].toDate(),
+                      message: snapshot.data!.data()!["Chat"][index]["Massage"].toString(),
+                      sendBy: snapshot.data!.data()!["Chat"][index]["Email"],
+                      // replyMessage:ReplyMessage. ,
+                      messageType: MessageType.text,
+                        replyMessage: ReplyMessage(
+
+                          message:snapshot.data!.data()?["Chat"][index]["ReplyMassage"],
+                          messageId: snapshot.data!.data()?["Chat"][index]["ReplyMassageId"],
+                          messageType: MessageType.text,
+                          replyBy: snapshot.data!.data()?["Chat"][index]["ReplyMassageBy"],
+                          replyTo: snapshot.data!.data()?["Chat"][index]["ReplyMassageTo"],
+
                         )
-                      ],
-                      borderRadius: BorderRadius.circular(10),
+
+                    )
+
+
+                );
+              }
+
+            }
+            return snapshot.data?.data() !=null && snapshot.hasData
+            ?
+            SizedBox(
+              height: size.height * 1,
+              width: size.width * 1,
+              child: ChatView(
+                currentUser: currentUser,
+                chatController: _chatController,
+                onSendTap: _onSendTap,
+                // featureActiveConfig: const FeatureActiveConfig(
+                //   lastSeenAgoBuilderVisibility: true,
+                //   receiptsBuilderVisibility: true,
+                // ),
+                chatViewState: ChatViewState.hasMessages,
+
+                appBar: const ChatViewAppBar(
+                  elevation: 0,
+                  backGroundColor: Colors.brown,
+                  profilePicture: "",
+                  backArrowColor: Colors.white70,
+                  chatTitle: "Chat view",
+                  chatTitleTextStyle: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    letterSpacing: 0.25,
+                  ),
+                  userStatus: "online",
+                  userStatusTextStyle: TextStyle(color: Colors.grey),
+                ),
+                chatBackgroundConfig: const ChatBackgroundConfiguration(
+                  messageTimeIconColor: Colors.green,
+                  messageTimeTextStyle: TextStyle(color: Colors.pinkAccent),
+                  defaultGroupSeparatorConfig: DefaultGroupSeparatorConfiguration(
+                    textStyle: TextStyle(
+                      color: Colors.teal,
+                      fontSize: 17,
                     ),
                   ),
+                  backgroundColor: Colors.white70,
                 ),
-                imageMessageConfig: ImageMessageConfiguration(
-                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
-                  shareIconConfig: ShareIconConfiguration(
-                    defaultIconBackgroundColor: Colors.white,
-                    defaultIconColor: Colors.black,
+                sendMessageConfig: SendMessageConfiguration(
+                  replyMessageColor: Colors.black26,
+                  defaultSendButtonColor: Colors.black26,
+                  replyDialogColor: Colors.black26,
+                  replyTitleColor: Colors.black26,
+                  textFieldBackgroundColor: Colors.cyan,
+                  closeIconColor: Colors.black,
+                  textFieldConfig: TextFieldConfiguration(
+
+                    onMessageTyping: (status) {
+                      /// Do with status
+                      debugPrint(status.toString());
+                    },
+                    compositionThresholdTime: const Duration(seconds: 1),
+                    textStyle: const TextStyle(color: Colors.black),
                   ),
                 ),
-              ),
-              profileCircleConfig: const ProfileCircleConfiguration(
-                profileImageUrl: "",
-              ),
-              repliedMessageConfig: RepliedMessageConfiguration(
-                backgroundColor: Colors.white,
-                verticalBarColor: Colors.pinkAccent,
-                repliedMsgAutoScrollConfig: RepliedMsgAutoScrollConfig(
-                  enableHighlightRepliedMsg: true,
-                  highlightColor: Colors.pinkAccent.shade100,
-                  highlightScale: 1.1,
+                chatBubbleConfig: ChatBubbleConfiguration(
+                  outgoingChatBubbleConfig: const ChatBubble(
+                    receiptsWidgetConfig:
+                        ReceiptsWidgetConfig(showReceiptsIn: ShowReceiptsIn.all),
+                    color: CupertinoColors.activeOrange,
+                  ),
+                  inComingChatBubbleConfig: ChatBubble(
+                    linkPreviewConfig: const LinkPreviewConfiguration(
+                      linkStyle: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                      backgroundColor: Colors.white,
+                      bodyStyle: TextStyle(fontSize: 10),
+                      titleStyle: TextStyle(fontSize: 5),
+                    ),
+                    textStyle: const TextStyle(color: Colors.pinkAccent),
+                    onMessageRead: (message) {
+                      /// send your message reciepts to the other client
+                      debugPrint('Message Read');
+                    },
+                    senderNameTextStyle: const TextStyle(color: Colors.black),
+                    color: Colors.pinkAccent,
+                  ),
                 ),
-                textStyle: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.25,
-                ),
-                replyTitleTextStyle: const TextStyle(color: Colors.black),
-              ),
-              swipeToReplyConfig: const SwipeToReplyConfiguration(
-                replyIconColor: Colors.green,
-              ),
-            ),
-          );
-        },
+                messageConfig: const MessageConfiguration(
 
+                  messageReactionConfig: MessageReactionConfiguration(
+
+                    backgroundColor: Colors.white,
+                    borderColor: Colors.black,
+                    reactedUserCountTextStyle: TextStyle(color: Colors.black),
+                    reactionCountTextStyle: TextStyle(color: Colors.black),
+                  ),
+                ),
+
+                replyPopupConfig: const ReplyPopupConfiguration(
+                  backgroundColor: Colors.white,
+                  buttonTextStyle: TextStyle(color: Colors.black),
+                  topBorderColor: Colors.black,
+                ),
+                repliedMessageConfig: RepliedMessageConfiguration(
+                  backgroundColor: Colors.white,
+                  verticalBarColor: Colors.pinkAccent,
+                  repliedMsgAutoScrollConfig: RepliedMsgAutoScrollConfig(
+                    enableHighlightRepliedMsg: true,
+                    highlightColor: Colors.pinkAccent.shade100,
+                    highlightScale: 1.1,
+                  ),
+                  textStyle: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.25,
+                  ),
+                  replyTitleTextStyle: const TextStyle(color: Colors.black),
+                ),
+                swipeToReplyConfig: const SwipeToReplyConfiguration(
+                  replyIconColor: Colors.green,
+                ),
+              ),
+            )
+            :
+            SizedBox(
+              height: size.height * 1,
+              width: size.width * 1,
+              child: ChatView(
+                currentUser: currentUser,
+                chatController: _chatController,
+                onSendTap: _onSendTap,
+                // featureActiveConfig: const FeatureActiveConfig(
+                //   lastSeenAgoBuilderVisibility: true,
+                //   receiptsBuilderVisibility: true,
+                // ),
+                chatViewState: ChatViewState.hasMessages,
+
+                appBar: const ChatViewAppBar(
+                  elevation: 0,
+                  backGroundColor: Colors.brown,
+                  profilePicture: "",
+                  backArrowColor: Colors.white70,
+                  chatTitle: "Chat view",
+                  chatTitleTextStyle: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    letterSpacing: 0.25,
+                  ),
+                  userStatus: "online",
+                  userStatusTextStyle: TextStyle(color: Colors.grey),
+                ),
+                chatBackgroundConfig: const ChatBackgroundConfiguration(
+                  messageTimeIconColor: Colors.green,
+                  messageTimeTextStyle: TextStyle(color: Colors.pinkAccent),
+                  defaultGroupSeparatorConfig: DefaultGroupSeparatorConfiguration(
+                    textStyle: TextStyle(
+                      color: Colors.teal,
+                      fontSize: 17,
+                    ),
+                  ),
+                  backgroundColor: Colors.white70,
+                ),
+                sendMessageConfig: SendMessageConfiguration(
+                  replyMessageColor: Colors.black26,
+                  defaultSendButtonColor: Colors.black26,
+                  replyDialogColor: Colors.black26,
+                  replyTitleColor: Colors.black26,
+                  textFieldBackgroundColor: Colors.cyan,
+                  closeIconColor: Colors.black,
+                  textFieldConfig: TextFieldConfiguration(
+
+                    onMessageTyping: (status) {
+                      /// Do with status
+                      debugPrint(status.toString());
+                    },
+                    compositionThresholdTime: const Duration(seconds: 1),
+                    textStyle: const TextStyle(color: Colors.black),
+                  ),
+                ),
+                // chatBubbleConfig: ChatBubbleConfiguration(
+                //   outgoingChatBubbleConfig: const ChatBubble(
+                //     receiptsWidgetConfig:
+                //         ReceiptsWidgetConfig(showReceiptsIn: ShowReceiptsIn.all),
+                //     color: CupertinoColors.activeOrange,
+                //   ),
+                //   inComingChatBubbleConfig: ChatBubble(
+                //     linkPreviewConfig: const LinkPreviewConfiguration(
+                //       linkStyle: TextStyle(
+                //         color: Colors.blue,
+                //         decoration: TextDecoration.underline,
+                //       ),
+                //       backgroundColor: Colors.white,
+                //       bodyStyle: TextStyle(fontSize: 10),
+                //       titleStyle: TextStyle(fontSize: 5),
+                //     ),
+                //     textStyle: const TextStyle(color: Colors.pinkAccent),
+                //     onMessageRead: (message) {
+                //       /// send your message reciepts to the other client
+                //       debugPrint('Message Read');
+                //     },
+                //     senderNameTextStyle: const TextStyle(color: Colors.black),
+                //     color: Colors.pinkAccent,
+                //   ),
+                // ),
+                messageConfig: const MessageConfiguration(
+
+                  messageReactionConfig: MessageReactionConfiguration(
+
+                    backgroundColor: Colors.white,
+                    borderColor: Colors.black,
+                    reactedUserCountTextStyle: TextStyle(color: Colors.black),
+                    reactionCountTextStyle: TextStyle(color: Colors.black),
+                  ),
+                ),
+
+                // replyPopupConfig: const ReplyPopupConfiguration(
+                //   backgroundColor: Colors.white,
+                //   buttonTextStyle: TextStyle(color: Colors.black),
+                //   topBorderColor: Colors.black,
+                // ),
+                // repliedMessageConfig: RepliedMessageConfiguration(
+                //   backgroundColor: Colors.white,
+                //   verticalBarColor: Colors.pinkAccent,
+                //   repliedMsgAutoScrollConfig: RepliedMsgAutoScrollConfig(
+                //     enableHighlightRepliedMsg: true,
+                //     highlightColor: Colors.pinkAccent.shade100,
+                //     highlightScale: 1.1,
+                //   ),
+                //   textStyle: const TextStyle(
+                //     color: Colors.white,
+                //     fontWeight: FontWeight.bold,
+                //     letterSpacing: 0.25,
+                //   ),
+                //   replyTitleTextStyle: const TextStyle(color: Colors.black),
+                // ),
+                // swipeToReplyConfig: const SwipeToReplyConfiguration(
+                //   replyIconColor: Colors.green,
+                // ),
+              ),
+            )
+            ;
+          },
+        ),
       ),
     );
   }
@@ -237,27 +339,40 @@ class _chatState extends State<chat> {
     ReplyMessage replyMessage,
     MessageType messageType,
   ) async {
-    // final id = int.parse(messageList.last.id) + 1;
-    const id = 1;
-    _chatController.addMessage(
-      Message(
-        id: id.toString(),
-        createdAt: DateTime.now(),
-        message: message,
-        sendBy: currentUser.id,
-        replyMessage: replyMessage,
-        messageType: messageType,
-      ),
-    );
+    await FirebaseFirestore.instance.collection("ChatSystem").doc("AruPriya").get().then((value) async {
+      if(value.data()==null){
+        await FirebaseFirestore.instance.collection("ChatSystem").doc("AruPriya").set({
+          "Chat":[{
+            "Name":"Priyanka Gupta",
+            "Email":"gupta200priyanka@gmail.com",
+            "Massage":message,
+            "Time":DateTime.now(),
+            "massageType":messageType.name,
+            "ReplyMassage":replyMessage.message,
+            "ReplyMassageId":replyMessage.messageId,
+            "ReplyMassageBy":replyMessage.replyBy,
+            "ReplyMassageType":replyMessage.messageType.name,
+            "ReplyMassageTo":replyMessage.replyTo
+          }]
+        });
+      }
+      else{
+        await FirebaseFirestore.instance.collection("ChatSystem").doc("AruPriya").update({
+          "Chat":FieldValue.arrayUnion([{
+            "Name":"Priyanka Gupta",
+            "Email":"gupta200priyanka@gmail.com",
+            "Massage":message,
+            "Time":DateTime.now(),
+            "massageType":messageType.name,
+            "ReplyMassage":replyMessage.message,
+            "ReplyMassageId":replyMessage.messageId,
+            "ReplyMassageBy":replyMessage.replyBy,
+            "ReplyMassageType":replyMessage.messageType.name,
+            "ReplyMassageTo":replyMessage.replyTo
 
-    Future.delayed(const Duration(milliseconds: 300), () {
-      _chatController.initialMessageList.last.setStatus =
-          MessageStatus.undelivered;
+          }])
+        });
+      }
     });
-    Future.delayed(const Duration(seconds: 1), () {
-      _chatController.initialMessageList.last.setStatus = MessageStatus.read;
-    });
-
-
   }
 }

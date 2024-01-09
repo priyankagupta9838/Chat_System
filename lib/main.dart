@@ -1,9 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
-import 'chat_list.dart';
-import 'chat_page.dart';
 import 'chat_view2.dart';
 import 'firebase_options.dart';
 import 'login_page.dart';
@@ -50,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
 
-    return  const chat() ;
+    return  const Login() ;
   }
 
 }
